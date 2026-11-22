@@ -1,0 +1,250 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Pelo Macio Agenda</title>
+<style>
+/* ===== Tokens (ver docs/02-UX-UI.md) ===== */
+:root{
+  --c-ink:#0F172A; --c-muted:#475569; --c-bg:#F6F7FB; --c-surface:#fff; --c-line:#D9DEE8;
+  --c-primary:#1D4ED8; --c-primary-ink:#fff; --c-danger:#B4122F; --c-ok:#0E7C4A;
+  --c-warn-bg:#FFF4D6; --c-warn-ink:#6B4200;
+  --s1:4px; --s2:8px; --s3:16px; --s4:24px; --s5:32px; --r:12px; --tap:48px;
+  --f:system-ui,-apple-system,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+  --t-xl:1.75rem; --t-lg:1.25rem; --t-md:1rem; --t-sm:.875rem;
+}
+*{box-sizing:border-box}
+html,body{margin:0;background:var(--c-bg);color:var(--c-ink);font:400 var(--t-md)/1.45 var(--f)}
+body{max-width:480px;margin:0 auto;min-height:100vh;padding-bottom:88px}
+h1{font-size:var(--t-xl);line-height:1.15;margin:0;letter-spacing:-.01em}
+h1:focus{outline:none}
+:focus-visible{outline:3px solid var(--c-primary);outline-offset:2px;border-radius:6px}
+header{padding:var(--s4) var(--s3) var(--s3)}
+header p{margin:var(--s1) 0 0;color:var(--c-muted);font-size:var(--t-sm)}
+main{padding:0 var(--s3)}
+button,input,select{font:inherit;color:inherit}
+.btn{min-height:var(--tap);padding:0 var(--s3);border-radius:var(--r);border:2px solid var(--c-line);background:var(--c-surface);font-weight:600;cursor:pointer}
+.btn.primary{background:var(--c-primary);border-color:var(--c-primary);color:var(--c-primary-ink)}
+.btn.danger{color:var(--c-danger);border-color:var(--c-danger)}
+.btn.sm{min-height:40px;padding:0 var(--s3);font-size:var(--t-sm)}
+.btn[disabled]{opacity:.5;cursor:not-allowed}
+.row{display:flex;gap:var(--s2);align-items:center}
+.row.between{justify-content:space-between}
+.grow{flex:1}
+/* data */
+.datebar{display:flex;gap:var(--s2);margin-bottom:var(--s3)}
+.datebar input{flex:1;min-height:var(--tap);border:2px solid var(--c-line);border-radius:var(--r);padding:0 var(--s3);background:var(--c-surface)}
+.list{list-style:none;margin:0;padding:0;display:grid;gap:var(--s3)}
+.card{background:var(--c-surface);border:1px solid var(--c-line);border-radius:var(--r);padding:var(--s3)}
+.appt{display:grid;grid-template-columns:72px 1fr;gap:var(--s3)}
+.time{font-size:var(--t-lg);font-weight:800;font-variant-numeric:tabular-nums;line-height:1.1}
+.time small{display:block;font-size:var(--t-sm);font-weight:500;color:var(--c-muted)}
+.appt h2,.svc h2{font-size:var(--t-md);margin:0}
+.meta{color:var(--c-muted);font-size:var(--t-sm);margin:var(--s1) 0 0}
+.chip{display:inline-block;font-size:var(--t-sm);font-weight:700;padding:2px 10px;border-radius:99px;border:1.5px solid currentColor}
+.chip.ok{color:var(--c-ok)} .chip.no{color:var(--c-danger)} .chip.off{color:var(--c-muted)}
+.appt.off{opacity:.75}
+.actions{display:flex;gap:var(--s2);margin-top:var(--s2);flex-wrap:wrap}
+.empty{text-align:center;padding:var(--s5) var(--s3);color:var(--c-muted)}
+.empty strong{display:block;color:var(--c-ink);font-size:var(--t-lg);margin-bottom:var(--s2)}
+/* forms */
+form{display:grid;gap:var(--s3)}
+label{display:grid;gap:var(--s1);font-weight:600}
+label input,label select{min-height:var(--tap);border:2px solid var(--c-line);border-radius:var(--r);padding:0 var(--s3);background:var(--c-surface);font-weight:400}
+label .hint{font-weight:400;color:var(--c-muted);font-size:var(--t-sm)}
+.err{color:var(--c-danger);font-size:var(--t-sm);font-weight:600;min-height:0}
+input[aria-invalid=true],select[aria-invalid=true]{border-color:var(--c-danger)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:var(--s3)}
+.alert{border-radius:var(--r);padding:var(--s3);background:var(--c-warn-bg);color:var(--c-warn-ink);font-weight:600;border:2px solid #E0B24A}
+.end{background:var(--c-surface);border:1px dashed var(--c-line);border-radius:var(--r);padding:var(--s2) var(--s3);color:var(--c-muted)}
+.end b{color:var(--c-ink)}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:96px;background:var(--c-ink);color:#fff;padding:var(--s2) var(--s3);border-radius:99px;font-weight:600;z-index:9}
+/* nav */
+nav{position:fixed;left:0;right:0;bottom:0;max-width:480px;margin:0 auto;background:var(--c-surface);border-top:1px solid var(--c-line);display:grid;grid-template-columns:1fr 1fr;padding:var(--s2) var(--s3) calc(var(--s2) + env(safe-area-inset-bottom,0px));gap:var(--s2)}
+nav a{display:grid;place-items:center;min-height:var(--tap);border-radius:var(--r);color:var(--c-muted);text-decoration:none;font-weight:700}
+nav a[aria-current=page]{background:#E3EAFD;color:var(--c-primary)}
+.fab{position:fixed;right:max(var(--s3),calc(50% - 240px + var(--s3)));bottom:84px}
+.fab .btn{box-shadow:0 6px 16px rgba(15,23,42,.25);border-radius:99px;padding:0 var(--s4)}
+@media (prefers-reduced-motion:no-preference){.toast{animation:in .2s ease-out}@keyframes in{from{opacity:0;transform:translate(-50%,8px)}}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<div id="toast" class="toast" role="status" hidden></div>
+<script>
+"use strict";
+/* ===== Estado em memória (protótipo: dados seed; troque por BaaS no MVP) ===== */
+const iso = d => new Date(d.getTime()-d.getTimezoneOffset()*6e4).toISOString().slice(0,10);
+const TODAY = iso(new Date());
+const TOMORROW = iso(new Date(Date.now()+864e5));
+const state = {
+  date: TODAY, pending: null, nextId: 100,
+  services: [
+    {id:"s1", nome:"Banho", dur:60, preco:6000},
+    {id:"s2", nome:"Tosa higiênica", dur:40, preco:4500},
+    {id:"s3", nome:"Banho e tosa", dur:120, preco:11000}
+  ],
+  appts: [
+    {id:"a1", svc:"s1", data:TODAY, hora:"09:00", tutor:"Camila Ribeiro", tel:"(49) 99876-5432", pet:"Thor", status:"agendado"},
+    {id:"a2", svc:"s3", data:TODAY, hora:"10:30", tutor:"João Prado", tel:"(49) 98811-2233", pet:"Mel", status:"agendado"},
+    {id:"a3", svc:"s2", data:TODAY, hora:"14:00", tutor:"Ana Becker", tel:"(49) 99123-4567", pet:"Bidu", status:"agendado"},
+    {id:"a4", svc:"s1", data:TOMORROW, hora:"09:00", tutor:"Luiz Mota", tel:"(49) 99700-1122", pet:"Luna", status:"agendado"}
+  ]
+};
+/* ===== Utilidades ===== */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const toMin = h => { const [a,b] = h.split(":").map(Number); return a*60+b; };
+const toHM = m => String(Math.floor(m/60)).padStart(2,"0")+":"+String(m%60).padStart(2,"0");
+const brl = c => (c/100).toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const svc = id => state.services.find(s => s.id===id);
+const fmtDate = d => new Date(d+"T12:00:00").toLocaleDateString("pt-BR",{weekday:"long",day:"2-digit",month:"long"});
+function toast(msg){ const t=$("#toast"); t.textContent=msg; t.hidden=false; clearTimeout(toast.t); toast.t=setTimeout(()=>t.hidden=true,2500); }
+function conflict(data,hora,svcId,ignoreId){
+  const s = svc(svcId); if(!s||!hora) return null;
+  const a=toMin(hora), b=a+s.dur;
+  return state.appts.find(x => x.id!==ignoreId && x.status==="agendado" && x.data===data &&
+    a < toMin(x.hora)+svc(x.svc).dur && toMin(x.hora) < b) || null;
+}
+const nav = cur => `<nav aria-label="Principal">
+  <a href="#agenda" ${cur==="agenda"?'aria-current="page"':""}>Agenda</a>
+  <a href="#servicos" ${cur==="servicos"?'aria-current="page"':""}>Serviços</a></nav>`;
+
+/* ===== Tela 1: Agenda do dia ===== */
+function vAgenda(){
+  const list = state.appts.filter(a=>a.data===state.date).sort((a,b)=>toMin(a.hora)-toMin(b.hora));
+  const chip = {agendado:["ok","Agendado"],cancelado:["off","Cancelado"],"no-show":["no","Não veio"]};
+  const items = list.map(a=>{
+    const s=svc(a.svc), [k,l]=chip[a.status], p=state.pending===a.id, act=a.status==="agendado";
+    return `<li class="card appt ${act?"":"off"}">
+      <div class="time">${a.hora}<small>até ${toHM(toMin(a.hora)+s.dur)}</small></div>
+      <div><div class="row between"><h2>${esc(a.pet)} · ${esc(s.nome)}</h2><span class="chip ${k}">${l}</span></div>
+      <p class="meta">${esc(a.tutor)} · ${esc(a.tel)}</p>
+      ${act?`<div class="actions">${p
+        ?`<button class="btn sm danger" data-do="cancel" data-id="${a.id}">Confirmar cancelamento</button><button class="btn sm" data-do="keep">Voltar</button>`
+        :`<button class="btn sm" data-do="ask" data-id="${a.id}">Cancelar</button><button class="btn sm" data-do="noshow" data-id="${a.id}" ${a.data>TODAY?'disabled aria-label="Não veio (indisponível para datas futuras)"':""}>Não veio</button>`}</div>`:""}
+      </div></li>`;}).join("");
+  return `<header><h1 tabindex="-1">Agenda</h1><p>${fmtDate(state.date)}</p></header>
+  <main><div class="datebar"><button class="btn" data-do="day" data-d="-1" aria-label="Dia anterior">‹</button>
+    <input type="date" id="dt" value="${state.date}" aria-label="Escolher data"><button class="btn" data-do="day" data-d="1" aria-label="Próximo dia">›</button></div>
+  ${list.length?`<ul class="list">${items}</ul>`:`<div class="empty"><strong>Nenhum agendamento neste dia</strong>Toque em “Novo agendamento” para marcar o primeiro.</div>`}</main>
+  <div class="fab"><a class="btn primary" style="display:inline-grid;place-items:center;text-decoration:none" href="#novo">+ Novo agendamento</a></div>${nav("agenda")}`;
+}
+
+/* ===== Tela 2: Novo agendamento ===== */
+function vNovo(){
+  return `<header><h1 tabindex="-1">Novo agendamento</h1><p>Preencha os dados do atendimento</p></header>
+  <main><form id="f" novalidate>
+   <div id="cf" role="alert" class="alert" hidden></div>
+   <label>Serviço<select name="svc" aria-describedby="e-svc">${state.services.map(s=>`<option value="${s.id}">${esc(s.nome)} · ${s.dur} min · ${brl(s.preco)}</option>`).join("")}</select><span class="err" id="e-svc"></span></label>
+   <div class="two"><label>Data<input type="date" name="data" value="${state.date<TODAY?TODAY:state.date}" aria-describedby="e-data"><span class="err" id="e-data"></span></label>
+   <label>Hora<input type="time" name="hora" aria-describedby="e-hora"><span class="err" id="e-hora"></span></label></div>
+   <div class="end" id="end" aria-live="polite">Escolha a hora para ver o término.</div>
+   <label>Nome do tutor<input name="tutor" autocomplete="name" aria-describedby="e-tutor"><span class="err" id="e-tutor"></span></label>
+   <label>Telefone<input name="tel" type="tel" inputmode="tel" autocomplete="tel" placeholder="(49) 99999-9999" aria-describedby="e-tel"><span class="err" id="e-tel"></span></label>
+   <label>Nome do pet<input name="pet" aria-describedby="e-pet"><span class="err" id="e-pet"></span></label>
+   <p class="meta">Guardamos só nome, telefone e nome do pet, para organizar a agenda (LGPD).</p>
+   <div class="row"><a class="btn grow" style="display:grid;place-items:center;text-decoration:none" href="#agenda">Cancelar</a><button class="btn primary grow" type="submit">Salvar agendamento</button></div>
+  </form></main>${nav("agenda")}`;
+}
+function bindNovo(){
+  const f=$("#f");
+  const upd=()=>{
+    const v=Object.fromEntries(new FormData(f)), s=svc(v.svc);
+    $("#end").innerHTML = v.hora ? `Atendimento das <b>${v.hora}</b> às <b>${toHM(toMin(v.hora)+s.dur)}</b>` : "Escolha a hora para ver o término.";
+    const c = conflict(v.data,v.hora,v.svc), box=$("#cf");
+    box.hidden=!c;
+    if(c) box.textContent=`Conflito: ${c.pet} já está marcado das ${c.hora} às ${toHM(toMin(c.hora)+svc(c.svc).dur)}. Escolha outro horário.`;
+    return c;
+  };
+  f.addEventListener("input",upd);
+  f.addEventListener("submit",e=>{
+    e.preventDefault(); const v=Object.fromEntries(new FormData(f)); const er={};
+    if(!v.data) er.data="Informe a data."; else if(v.data<TODAY) er.data="A data não pode estar no passado.";
+    if(!v.hora) er.hora="Informe a hora."; else if(v.data===TODAY && toMin(v.hora)<new Date().getHours()*60+new Date().getMinutes()) er.hora="Esse horário já passou.";
+    if(v.tutor.trim().length<3) er.tutor="Digite o nome com pelo menos 3 letras.";
+    if(!/^\(?\d{2}\)?\s?9?\d{4}-?\d{4}$/.test(v.tel.trim())) er.tel="Digite o telefone com DDD, ex.: (49) 99999-9999.";
+    if(!v.pet.trim()) er.pet="Informe o nome do pet.";
+    ["svc","data","hora","tutor","tel","pet"].forEach(k=>{ $("#e-"+k).textContent=er[k]||""; f.elements[k].setAttribute("aria-invalid",!!er[k]); });
+    const first=Object.keys(er)[0]; if(first){ f.elements[first].focus(); return; }
+    if(upd()){ $("#cf").scrollIntoView({block:"center"}); return; }
+    state.appts.push({id:"a"+state.nextId++, svc:v.svc, data:v.data, hora:v.hora, tutor:v.tutor.trim(), tel:v.tel.trim(), pet:v.pet.trim(), status:"agendado"});
+    state.date=v.data; toast("Agendamento salvo"); location.hash="agenda";
+  });
+}
+
+/* ===== Tela 3: Serviços ===== */
+function vServicos(){
+  const items=state.services.map(s=>`<li class="card svc row between"><div><h2>${esc(s.nome)}</h2><p class="meta">${s.dur} min · ${brl(s.preco)}</p></div>
+    <a class="btn sm" style="display:grid;place-items:center;text-decoration:none" href="#servico-${s.id}" aria-label="Editar ${esc(s.nome)}">Editar</a></li>`).join("");
+  return `<header><h1 tabindex="-1">Serviços</h1><p>Duração e preço de cada atendimento</p></header>
+  <main>${state.services.length?`<ul class="list">${items}</ul>`:`<div class="empty"><strong>Nenhum serviço cadastrado</strong>Cadastre o primeiro para poder agendar.</div>`}</main>
+  <div class="fab"><a class="btn primary" style="display:inline-grid;place-items:center;text-decoration:none" href="#servico-novo">+ Novo serviço</a></div>${nav("servicos")}`;
+}
+
+/* ===== Tela 4: Novo / editar serviço ===== */
+function vServico(id){
+  const s = id==="novo" ? {nome:"",dur:"",preco:0} : svc(id);
+  if(!s){ location.hash="servicos"; return ""; }
+  return `<header><h1 tabindex="-1">${id==="novo"?"Novo serviço":"Editar serviço"}</h1><p>Informe nome, duração e preço</p></header>
+  <main><form id="f" novalidate>
+   <label>Nome do serviço<input name="nome" value="${esc(s.nome)}" aria-describedby="e-nome"><span class="err" id="e-nome"></span></label>
+   <label>Duração em minutos<input name="dur" inputmode="numeric" value="${s.dur}" aria-describedby="h-dur e-dur"><span class="hint" id="h-dur">Entre 10 e 480 minutos.</span><span class="err" id="e-dur"></span></label>
+   <label>Preço<input name="preco" inputmode="numeric" value="${s.preco?brl(s.preco):""}" placeholder="R$ 0,00" aria-describedby="e-preco"><span class="err" id="e-preco"></span></label>
+   <div class="row"><a class="btn grow" style="display:grid;place-items:center;text-decoration:none" href="#servicos">Cancelar</a><button class="btn primary grow" type="submit">Salvar serviço</button></div>
+   ${id!=="novo"?`<button type="button" class="btn danger" id="del">Excluir serviço</button>`:""}
+  </form></main>${nav("servicos")}`;
+}
+function bindServico(id){
+  const f=$("#f");
+  f.elements.preco.addEventListener("input",e=>{ const d=e.target.value.replace(/\D/g,""); e.target.value=d?brl(parseInt(d,10)):""; });
+  f.elements.dur.addEventListener("input",e=>{ e.target.value=e.target.value.replace(/\D/g,""); });
+  f.addEventListener("submit",e=>{
+    e.preventDefault(); const v=Object.fromEntries(new FormData(f)); const er={};
+    const dur=parseInt(v.dur,10), preco=parseInt(v.preco.replace(/\D/g,"")||"0",10);
+    if(v.nome.trim().length<3) er.nome="Digite o nome com pelo menos 3 letras.";
+    if(!(dur>=10&&dur<=480)) er.dur="Use um número inteiro entre 10 e 480.";
+    if(!(preco>0)) er.preco="Informe um preço maior que R$ 0,00.";
+    ["nome","dur","preco"].forEach(k=>{ $("#e-"+k).textContent=er[k]||""; f.elements[k].setAttribute("aria-invalid",!!er[k]); });
+    const first=Object.keys(er)[0]; if(first){ f.elements[first].focus(); return; }
+    if(id==="novo") state.services.push({id:"s"+state.nextId++,nome:v.nome.trim(),dur,preco});
+    else Object.assign(svc(id),{nome:v.nome.trim(),dur,preco});
+    toast("Serviço salvo"); location.hash="servicos";
+  });
+  const del=$("#del");
+  if(del) del.addEventListener("click",()=>{
+    if(state.appts.some(a=>a.svc===id&&a.status==="agendado"&&a.data>=TODAY)){ toast("Há agendamentos futuros com este serviço"); return; }
+    if(del.dataset.ok!=="1"){ del.dataset.ok="1"; del.textContent="Confirmar exclusão"; return; }
+    state.services=state.services.filter(s=>s.id!==id); toast("Serviço excluído"); location.hash="servicos";
+  });
+}
+
+/* ===== Roteador (hash simples) e eventos ===== */
+function route(){
+  const h=(location.hash||"#agenda").slice(1); state.pending=null;
+  const app=$("#app");
+  if(h==="novo"){ app.innerHTML=vNovo(); bindNovo(); }
+  else if(h==="servicos"){ app.innerHTML=vServicos(); }
+  else if(h.startsWith("servico-")){ const id=h.slice(8); app.innerHTML=vServico(id); if($("#f")) bindServico(id); }
+  else { app.innerHTML=vAgenda(); }
+  const t=$("h1"); if(t){ t.focus(); window.scrollTo(0,0); }
+}
+addEventListener("hashchange",route);
+document.addEventListener("keydown",e=>{ if(e.key==="Escape"){ if(state.pending){state.pending=null;route();} else if(location.hash&&location.hash!=="#agenda"&&location.hash!=="#servicos") history.back(); }});
+document.addEventListener("change",e=>{ if(e.target.id==="dt"&&e.target.value){ state.date=e.target.value; render(); }});
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-do]"); if(!b) return; const a=state.appts.find(x=>x.id===b.dataset.id);
+  switch(b.dataset.do){
+    case "day": state.date=iso(new Date(new Date(state.date+"T12:00:00").getTime()+b.dataset.d*864e5)); render(); break;
+    case "ask": state.pending=a.id; render(b.dataset.id); break;
+    case "keep": state.pending=null; render(); break;
+    case "cancel": a.status="cancelado"; state.pending=null; toast("Agendamento cancelado"); render(); break;
+    case "noshow": a.status="no-show"; toast("Marcado como não veio"); render(); break;
+  }
+});
+function render(focusId){ const y=scrollY; $("#app").innerHTML=vAgenda(); scrollTo(0,y); const f=document.querySelector(focusId?`[data-id="${focusId}"]`:"#dt"); if(f) f.focus(); }
+route();
+</script>
+</body>
+</html>
