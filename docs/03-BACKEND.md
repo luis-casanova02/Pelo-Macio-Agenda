@@ -91,10 +91,10 @@ Um único arquivo .sql executável, com comentários.
 ## 8. Checklist de entrega
 
 - [x] `schema.sql` documentado
-- [ ] Projeto Supabase criado, com RLS habilitado
-- [ ] 2 tabelas com policies (executar o SQL)
+- [x] Projeto Supabase criado, com RLS habilitado
+- [x] 2 tabelas com policies (executar o SQL)
 - [x] SDK integrado ao front (`src/lib/supabase.ts`)
 - [x] Variáveis de ambiente (`.env.example` pronto; falta criar o seu `.env`)
-- [ ] CRUD testado a partir do front (seção 5)
-- [ ] 3 serviços inseridos no banco
-- [ ] Submissão: link do repositório + URL do projeto Supabase
+- [x] CRUD testado a partir do front (seção 5)
+- [x] 3 serviços inseridos no banco
+- [x] Submissão: link do repositório + URL do projeto Supabase

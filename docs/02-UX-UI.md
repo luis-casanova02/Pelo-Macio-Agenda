@@ -1,7 +1,7 @@
 # Pelo Macio Agenda — UX/UI e Protótipo (Exercício 02)
 
 > Parte do projeto **Pelo Macio Agenda**. Base: [`README.md`](../README.md) (requisitos da Aula 01).
-> Protótipo hi-fi navegável: [`telas/index.html`](../telas/index.html) (abra no navegador; use a largura de celular, 375 px).
+> Protótipo hi-fi navegável: [`prototipo-telas/index.html`](../prototipo-telas/index.html) (abra no navegador; use a largura de celular, 375 px).
 > ⚠️ Rascunho gerado com apoio de IA. O teste heurístico abaixo foi feito por **inspeção do código/telas**; precisa ser repetido por humanos (ver seção 6).
 
 ---
@@ -88,7 +88,7 @@ Paleta no espírito Senac Tech (azul + vermelho + tinta escura), ajustada para c
 
 ## 4. Telas hi-fi
 
-Arquivo único e funcional: [`telas/index.html`](../telas/index.html). Dados de exemplo ficam **em memória** (recarregar a página reinicia); a persistência real entra na próxima aula (BaaS).
+Arquivo único e funcional: [`prototipo-telas/index.html`](../prototipo-telas/index.html). Dados de exemplo ficam **em memória** (recarregar a página reinicia); a persistência real entra na próxima aula (BaaS).
 
 | Tela | Elemento que fala mais alto | O que já funciona |
 |---|---|---|

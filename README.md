@@ -328,4 +328,31 @@ O **Pelo Macio Banho & Tosa**, pet shop de bairro em Lages/SC, agenda banhos e t
 ---
 
 _Este documento foi produzido com apoio de IA e deve ser tratado como rascunho até a revisão humana e a validação com usuários reais._
-# Pelo-Macio-Agenda
+
+---
+
+## Como rodar o projeto
+
+```bash
+npm install
+cp .env.example .env   # preencha com a URL e a chave pública do Supabase
+npm run dev
+```
+
+Estrutura: `schema.sql` (banco) · `src/` (app React + Tailwind + Vite) · `telas/` (protótipo em memória da Aula 02) · `docs/` (UX/UI e back-end).
+
+---
+
+## Telas (Aula 04)
+
+Front-end em **React + Tailwind**, integrado ao Supabase. Detalhes em [`docs/04-FRONTEND.md`](docs/04-FRONTEND.md).
+
+| Agenda do dia | Lista de serviços |
+|---|---|
+| ![Agenda](docs/img/01-agenda.png) | ![Serviços](docs/img/02-servicos.png) |
+
+| Cadastro de serviço | Novo agendamento |
+|---|---|
+| ![Cadastro](docs/img/03-cadastro.png) | ![Agendamento](docs/img/04-agendamento.png) |
+
+**Deploy:** _(cole aqui o link da Vercel)_
