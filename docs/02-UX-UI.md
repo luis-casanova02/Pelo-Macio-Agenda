@@ -158,8 +158,8 @@ Legenda: ✅ atende · ⚠️ atende com ressalva · ❌ falha.  Teste feito por
 - [x] Defini tokens (cores, tipo, espaçamento)
 - [x] 4 telas em alta fidelidade prontas
 - [x] Teste heurístico aplicado em cada tela _(por inspeção; repetir com humanos)_
-- [ ] Teste de teclado e leitor de tela feito na prática
-- [ ] Corrigir problema #1 e tratar #5
+- [x] Teste de teclado e leitor de tela feito na prática
+- [x] Corrigir problema #1 e tratar #5
 
 ### Critérios do professor
 1. **Coerência visual:** tokens únicos reutilizados nas 4 telas.

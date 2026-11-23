@@ -40,9 +40,9 @@ Grid: 1 coluna no celular, 2 a partir de 768 px, 3 a partir de 1280 px. Navegaç
 
 | Viewport | Agenda | Serviços | Cadastro | Agendar |
 |---|---|---|---|---|
-| 375 px | [ ] | [ ] | [ ] | [ ] |
-| 768 px | [ ] | [ ] | [ ] | [ ] |
-| 1280 px | [ ] | [ ] | [ ] | [ ] |
+| 375 px | [x] | [x] | [x] | [x] |
+| 768 px | [x] | [x] | [x] | [x] |
+| 1280 px | [x] | [x] | [x] | [x] |
 
 Como testar: DevTools (F12) → ícone de dispositivos → defina a largura.
 

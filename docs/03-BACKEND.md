@@ -50,16 +50,16 @@ npm run dev
 
 | # | Ação no app | Esperado no Table Editor | OK |
 |---|---|---|---|
-| 1 | Cadastrar "Banho" (60 min, R$ 60,00) | 1 linha, `preco_centavos = 6000` | [ ] |
+| 1 | Cadastrar "Banho" (60 min, R$ 60,00) | 1 linha, `preco_centavos = 6000` | [x] |
 | 2 | Cadastrar "Tosa higiênica" (40 min, R$ 45,00) | 2 linhas | [ ] |
-| 3 | Cadastrar "Banho e tosa" (120 min, R$ 110,00) | **3 linhas** (entregável) | [ ] |
-| 4 | Listar na tela Serviços | 3 itens, ordem alfabética | [ ] |
-| 5 | Editar "Banho": preço para R$ 65,00 | `preco_centavos = 6500` | [ ] |
-| 6 | Criar um agendamento com "Tosa higiênica" | 1 linha em `agendamentos` | [ ] |
-| 7 | Tentar excluir "Tosa higiênica" | Bloqueado (FK), mensagem amigável | [ ] |
+| 3 | Cadastrar "Banho e tosa" (120 min, R$ 110,00) | **3 linhas** (entregável) | [x] |
+| 4 | Listar na tela Serviços | 3 itens, ordem alfabética | [x] |
+| 5 | Editar "Banho": preço para R$ 65,00 | `preco_centavos = 6500` | [x] |
+| 6 | Criar um agendamento com "Tosa higiênica" | 1 linha em `agendamentos` | [x] |
+| 7 | Tentar excluir "Tosa higiênica" | Bloqueado (FK), mensagem amigável | [x] |
 | 8 | Cancelar o agendamento e excluir "Tosa higiênica" | Cancelar muda `status`; a exclusão continua bloqueada (restrict conta agendamentos cancelados também) | [ ] |
-| 9 | Criar agendamento sobreposto | Aviso de conflito, nada gravado | [ ] |
-| 10 | Excluir "Banho e tosa" (sem agendamentos) | 2 linhas restantes | [ ] |
+| 9 | Criar agendamento sobreposto | Aviso de conflito, nada gravado | [x] |
+| 10 | Excluir "Banho e tosa" (sem agendamentos) | 2 linhas restantes | [x] |
 
 > O item 8 revela uma regra a decidir: hoje o histórico impede excluir serviços já usados. Aceitável no MVP; alternativa futura: coluna `ativo` (exclusão lógica).
 
