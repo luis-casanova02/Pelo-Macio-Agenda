@@ -356,3 +356,30 @@ Front-end em **React + Tailwind**, integrado ao Supabase. Detalhes em [`docs/04-
 | ![Cadastro](docs/img/03-cadastro.png) | ![Agendamento](docs/img/04-agendamento.png) |
 
 **Deploy:** _(cole aqui o link da Vercel)_
+
+---
+
+## Testes e validação (Aula 05)
+
+Plano completo em [`docs/05-TESTES.md`](docs/05-TESTES.md) (matriz RF → teste, casos da US-01, bugs corrigidos e MoSCoW atualizado) e roteiro em [`docs/roteiro-usabilidade.md`](docs/roteiro-usabilidade.md).
+
+```bash
+npx playwright install chromium   # uma vez só
+npm run test:mock                 # back-end simulado, sem internet
+npm run test:e2e                  # app local + Supabase real (precisa do .env)
+```
+
+### MoSCoW atualizado
+
+| Must | Should | Could | Won't (agora) |
+|---|---|---|---|
+| US-01 a US-04, bloqueio de remoção com agendamento futuro | US-05, horários livres na agenda, constraint de conflito no banco, login, horário de funcionamento | Autocompletar tutor, lembretes por WhatsApp | Pagamentos, multi-profissional, offline, relatórios |
+
+## Limitações da IA encontradas
+
+1. **Regressão silenciosa de requisito.** Ao migrar a exclusão de serviços para exclusão lógica, a IA perdeu a regra "não remover serviço com agendamento futuro" (RF03), que já existia no protótipo. Nada quebrou no build; só um teste ligado ao requisito revelou (BUG-01).
+2. **Casos de borda esquecidos.** A IA validou "preço > 0", mas não o limite do tipo `integer` do banco, e calculou o fim do atendimento sem considerar a meia-noite ("às 25:00"). Ela acerta o caminho feliz e falha nos extremos (BUG-02, BUG-03).
+3. **Erro genérico que esconde a causa.** Um único `catch` culpava a conexão por qualquer falha, inclusive erro de dado. A mensagem parecia razoável, mas era enganosa.
+4. **Afirmações sobre ferramentas externas sem verificação.** A IA não consegue abrir o painel do Supabase nem da Vercel: nomes de menus e o comportamento de opções (como "Grant API access to new tables") foram dados de memória, com ressalvas, e precisaram ser confirmados por quem estava na tela.
+5. **A IA não enxerga o seu ambiente.** Comandos de Git foram dados com `telas`, mas a pasta se chamava `Telas` (o Git diferencia maiúsculas), e `node_modules` e `.env` chegaram ao repositório. Foi preciso ler as mensagens de erro reais para corrigir.
+6. **"Testado" nem sempre é testado.** O teste heurístico da Aula 02 foi por inspeção do código, e os testes automatizados da Aula 05 rodaram contra um back-end **simulado**. Nenhum deles substitui uma execução no Supabase real, no link publicado e com pessoas de verdade.

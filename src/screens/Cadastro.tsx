@@ -1,9 +1,12 @@
 import { useState } from "react";
 import type { FormEvent } from "react";
 import { Button, Empty, ErrorBox, Header, Input, LinkButton, Loading } from "../components/ui";
-import { desativarServico, listServicos, saveServico } from "../lib/api";
+import { desativarServico, listServicos, saveServico, temAgendamentoFuturo } from "../lib/api";
 import { useLoad } from "../lib/useLoad";
-import { brl, go, notify, type Servico } from "../lib/util";
+import { TODAY, brl, go, notify, type Servico } from "../lib/util";
+
+// O banco usa integer (centavos): acima de ~R$ 21 milhões dá erro. Limite de negócio bem menor.
+const PRECO_MAX = 9_999_999; // R$ 99.999,99
 
 /** Tela 2 · Cadastro/edição de serviço (INSERT/UPDATE). id = "novo" ou o uuid do serviço. */
 export default function Cadastro({ id }: { id: string }) {
@@ -26,6 +29,7 @@ function Form({ id, atual, title }: { id: string; atual?: Servico; title: string
   const [busy, setBusy] = useState(false);
   const [fail, setFail] = useState(false);
   const [ask, setAsk] = useState(false);
+  const [blocked, setBlocked] = useState(false);
 
   async function submit(e: FormEvent) {
     e.preventDefault();
@@ -33,6 +37,7 @@ function Form({ id, atual, title }: { id: string; atual?: Servico; title: string
     if (nome.trim().length < 3) x.nome = "Digite o nome com pelo menos 3 letras.";
     if (!(d >= 10 && d <= 480)) x.dur = "Use um número inteiro entre 10 e 480.";
     if (!(p > 0)) x.preco = "Informe um preço maior que R$ 0,00.";
+    else if (p > PRECO_MAX) x.preco = "O preço máximo é R$ 99.999,99.";
     setEr(x); setFail(false);
     const first = Object.keys(x)[0];
     if (first) { document.getElementById("f-" + first)?.focus(); return; }
@@ -42,7 +47,10 @@ function Form({ id, atual, title }: { id: string; atual?: Servico; title: string
   }
   async function remover() {
     if (!ask) { setAsk(true); return; }
-    try { await desativarServico(id); notify("Serviço removido da lista"); go("#servicos"); } catch { setFail(true); }
+    try {
+      if (await temAgendamentoFuturo(id, TODAY)) { setBlocked(true); setAsk(false); return; } // RF03
+      await desativarServico(id); notify("Serviço removido da lista"); go("#servicos");
+    } catch { setFail(true); }
   }
 
   return (
@@ -54,6 +62,7 @@ function Form({ id, atual, title }: { id: string; atual?: Servico; title: string
           onChange={e => setDur(e.target.value.replace(/\D/g, ""))} error={er.dur} />
         <Input id="f-preco" label="Preço" inputMode="numeric" placeholder="R$ 0,00" value={preco}
           onChange={e => { const d = e.target.value.replace(/\D/g, ""); setPreco(d ? brl(parseInt(d, 10)) : ""); }} error={er.preco} />
+        {blocked && <ErrorBox>Este serviço tem agendamentos futuros. Cancele-os na Agenda antes de removê-lo.</ErrorBox>}
         {fail && <ErrorBox>Não foi possível concluir. Seus dados foram mantidos; verifique a conexão e tente de novo.</ErrorBox>}
         <div className="flex gap-2">
           <LinkButton href="#servicos" className="flex-1">Cancelar</LinkButton>

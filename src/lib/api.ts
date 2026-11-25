@@ -38,3 +38,10 @@ export async function setStatus(id: string, status: Status) {
   const { error } = await supabase.from("agendamentos").update({ status }).eq("id", id);
   if (error) throw error;
 }
+/** RF03: serviço com agendamento futuro ativo não pode ser removido. */
+export async function temAgendamentoFuturo(servicoId: string, hoje: string): Promise<boolean> {
+  const { data, error } = await supabase.from("agendamentos").select("id")
+    .eq("servico_id", servicoId).eq("status", "agendado").gte("data", hoje).limit(1);
+  if (error) throw error;
+  return (data?.length ?? 0) > 0;
+}

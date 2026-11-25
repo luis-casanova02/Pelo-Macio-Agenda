@@ -45,6 +45,7 @@ function Form({ servs }: { servs: Servico[] }) {
     const now = new Date(), x: Record<string, string> = {};
     if (!data) x.data = "Informe a data."; else if (data < TODAY) x.data = "A data não pode estar no passado.";
     if (!hora) x.hora = "Informe a hora."; else if (data === TODAY && toMin(hora) < now.getHours() * 60 + now.getMinutes()) x.hora = "Esse horário já passou.";
+    else if (toMin(hora) + s.duracao_min > 1440) x.hora = "O atendimento passaria da meia-noite. Escolha um horário mais cedo.";
     if (tutor.trim().length < 3) x.tutor = "Digite o nome com pelo menos 3 letras.";
     if (!/^\(?\d{2}\)?\s?9?\d{4}-?\d{4}$/.test(tel.trim())) x.tel = "Digite o telefone com DDD, ex.: (49) 99999-9999.";
     if (!pet.trim()) x.pet = "Informe o nome do pet.";
@@ -72,7 +73,9 @@ function Form({ servs }: { servs: Servico[] }) {
         <Input id="f-hora" label="Hora" type="time" value={hora} onChange={e => setHora(e.target.value)} error={er.hora} />
       </div>
       <p aria-live="polite" className="rounded-xl border border-dashed border-slate-300 bg-white px-4 py-2 text-slate-600">
-        {hora ? <>Atendimento das <b className="text-slate-900">{hora}</b> às <b className="text-slate-900">{toHM(toMin(hora) + s.duracao_min)}</b></> : "Escolha a hora para ver o término."}
+        {!hora ? "Escolha a hora para ver o término." : toMin(hora) + s.duracao_min > 1440
+          ? <span className="font-semibold text-red-700">Esse atendimento passaria da meia-noite.</span>
+          : <>Atendimento das <b className="text-slate-900">{hora}</b> às <b className="text-slate-900">{toHM(toMin(hora) + s.duracao_min)}</b></>}
       </p>
       <Input id="f-tutor" label="Nome do tutor" autoComplete="name" value={tutor} onChange={e => setTutor(e.target.value)} error={er.tutor} />
       <Input id="f-tel" label="Telefone" type="tel" inputMode="tel" autoComplete="tel" placeholder="(49) 99999-9999" value={tel} onChange={e => setTel(e.target.value)} error={er.tel} />
